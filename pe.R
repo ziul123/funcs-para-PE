@@ -1,3 +1,15 @@
+# Vetor com os dados nas quantidades em freqs
+# Por exemplo, dados = (2,3) e freqs = (1,2)
+# fica (2,3,3)
+repete <- function(dados, freqs) {
+	tmp <- c()
+	for (i in 1:length(dados)) {
+		tmp <- append(tmp, rep(dados[i], freqs[i]))
+	}
+	tmp
+}
+
+
 # Desvio padrão populacional
 dp <- function(x) {
 	sqrt((length(x)-1)/length(x)) * sd(x)
