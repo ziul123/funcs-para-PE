@@ -93,21 +93,120 @@ tam_p <- function(err, conf, p = 1/2, d = 2){
 }
 
 
-#covc <- function(xv, xp, yv, yp) {
-#	espx <- sum(xv * xp)
-#	espy <- sum(yv * yp)
-#	varx <- varc(xv, xp)
-#	vary <- varc(yv, yp)
-#	dpx <- sqrt(varx)
-#	dpy <- sqrt(vary)
-#	
-#	
-#	
-#}
-#
-#
-#
-#covm <- function(matrix, xv, yv) {
-#
-#
-#}
+
+############
+# Módulo 3 #
+############
+
+
+ic_media_var <- function(m_a, conf, dp, n){
+	a <- 1-conf
+	x <- m_a
+	s <- dp
+	l <- x-qnorm(1-a/2)*(s/sqrt(n))
+	u <- x+qnorm(1-a/2)*(s/sqrt(n))
+	sprintf("[%f ; %f]", l, u)
+}
+
+
+ic_media_n_var <- function(m_a, conf, dp_a, n){
+	a <- 1-conf
+	x <- m_a
+	s <- dp_a
+	l <- x-qt(1-a/2, n-1)*(s/sqrt(n))
+	u <- x+qt(1-a/2, n-1)*(s/sqrt(n))
+	sprintf("[%f ; %f]", l, u)
+}
+
+
+ic_prop_ot <- function(p_a, conf, n){
+	a <- 1-conf
+	p <- p_a
+	l <- p-qnorm(1-a/2)*(sqrt(p*(1-p))/sqrt(n))
+	u <- p+qnorm(1-a/2)*(sqrt(p*(1-p))/sqrt(n))
+	sprintf("[%f ; %f]", l, u)
+}
+
+
+ic_prop_con <- function(p_a, conf, n){
+	a <- 1-conf
+	p <- p_a
+	l <- p-qnorm(1-a/2)*(1/(2*sqrt(n)))
+	u <- p+qnorm(1-a/2)*(1/(2*sqrt(n)))
+	sprintf("[%f ; %f]", l, u)
+}
+
+
+#caso 1 -> = vs !=
+#caso 2 -> = vs > ou <= vs >
+#caso 3 -> = vs < ou >= vs <
+#retorna a aceitação de H0
+t_hip_media_var <- function(m_a, m, var, n, sig, caso){
+	c <- qnorm(sig) * sqrt(var/n)
+	et <- m_a - m
+	Ha <- switch(caso,
+		abs(et) >= c,
+		et >= c,
+		et <= c
+	)
+	!Ha
+}
+
+
+
+#caso 1 -> = vs !=
+#caso 2 -> = vs > ou <= vs >
+#caso 3 -> = vs < ou >= vs <
+#retorna a aceitação de H0
+t_hip_media_n_var <- function(m_a, m, var_a, n, sig, caso){
+	c <- qt(sig, n-1) * sqrt(var/n)
+	et <- m_a - m
+	Ha <- switch(caso,
+		abs(et) >= c,
+		et >= c,
+		et <= c
+	)
+	!Ha
+}
+
+
+#caso 1 -> = vs !=
+#caso 2 -> = vs > ou <= vs >
+#caso 3 -> = vs < ou >= vs <
+p_valor_media_var <- function(m_a, m, var, n, caso){
+	et <- (m_a - m)/sqrt(var/n)
+	p <- switch(caso,
+		2 * (1-pnorm(abs(et))),
+		1-pnorm(et),
+		pnorm(et)
+	)
+	p
+}
+
+
+#caso 1 -> = vs !=
+#caso 2 -> = vs > ou <= vs >
+#caso 3 -> = vs < ou >= vs <
+p_valor_media_n_var <- function(m_a, m, var_a, n, caso){
+	et <- (m_a - m)/sqrt(var_a/n)
+	p <- switch(caso,
+		2 * (1-pt(abs(et), n-1)),
+		1-pt(et,n-1),
+		pt(et,n-1)
+	)
+	p
+}
+
+
+#caso 1 -> = vs !=
+#caso 2 -> = vs > ou <= vs >
+#caso 3 -> = vs < ou >= vs <
+p_valor_prop <- function(prop_a, prop, n, caso){
+	et <- (prop_a - prop)/sqrt((prop*(1-prop))/n)
+	p <- switch(caso,
+		2 * (1-pnorm(abs(et))),
+		1-pnorm(et),
+		pnorm(et)
+	)
+	p
+}
